@@ -1,0 +1,36 @@
+version: '3.3'
+
+networks:
+  example-net:
+    external:
+      name: example-network
+
+services:
+
+  flask_server:
+    build: .
+    command: python3 run_server.py
+    volumes:
+      - .:/src
+    ports:
+      - "9001:9001"
+    networks:
+      - example-net
+
+  redis:
+    image: redis:5.0.4
+    ports:
+      - "6379:6379"
+    networks:
+      - example-net
+
+  celery_server:
+    build: .
+    # command: celery -A celery_app.celery worker -l info
+    command: celery -A celery_app.celery worker -P eventlet -c 1000 -l info
+    volumes:
+      - .:/src
+    depends_on:
+      - redis
+    networks:
+      - example-net

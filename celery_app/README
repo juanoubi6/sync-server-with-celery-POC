@@ -1,0 +1,5 @@
+Run with workers)
+celery -A tornado_with_celery.celery_app worker -l info
+
+Run with green threads)
+celery -A tornado_with_celery.celery_app worker -P eventlet -c 1000
